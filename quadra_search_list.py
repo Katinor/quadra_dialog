@@ -6,7 +6,8 @@ search_engine = {
 	'진보위키': 'https://jinbowiki.org/wiki/index.php/',
 	'구스위키': 'http://goos.wiki/index.php?title=',
 	'구글': 'https://www.google.co.kr/search?q=',
-	'네이버': 'https://search.naver.com/search.naver?query='
+	'네이버': 'https://search.naver.com/search.naver?query=',
+	'스팀': 'http://store.steampowered.com/search/?term='
 }
 
 direct_url = {
