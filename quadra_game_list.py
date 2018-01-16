@@ -25,7 +25,7 @@ game_synonym = {
 	'titan souls' : ['타이탄 소울즈', '타이탄소울즈'],
 	'you must build a boat' : ['유 머스트 빌드 어 보트'],
 	'doki doki literature club' : ['두근두근 문예부', '두근두근문예부', '문예부'],
-	'paper please' : ['페이퍼 플리즈', '페이퍼플리즈', '동무 려권내라우', '동무려권내라우'],
+	'paper, please' : ['페이퍼 플리즈', '페이퍼플리즈', '동무 려권내라우', '동무려권내라우'],
 	'reigns' : ['레인즈'],
 	'this war of mine' : ['디스 워 오브 마인', '디스워오브마인']
 }
