@@ -19,9 +19,9 @@ game_synonym = {
 	"playerunknown's battlegrounds" : ['배그','배틀그라운드'],
 	'darkest dungeon' : ['다키스트 던전','다키스트던전','닼던'],
 	'ftl: faster than light' : ['ftl'],
-	'the biding of issac: rebirth' : ['아이작의 번제 리버스', '아이작의번제 리버스']
+	'the biding of issac: rebirth' : ['아이작의 번제 리버스', '아이작의번제 리버스'],
 	'downwell' : ['다운웰'],
-	'enter the gungeon' : ['엔터 더 건전'. '엔터더건전', '건전'],
+	'enter the gungeon' : ['엔터 더 건전', '엔터더건전', '건전'],
 	'titan souls' : ['타이탄 소울즈', '타이탄소울즈'],
 	'you must build a boat' : ['유 머스트 빌드 어 보트'],
 	'doki doki literature club' : ['두근두근 문예부', '두근두근문예부', '문예부'],
