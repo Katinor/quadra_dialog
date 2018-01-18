@@ -9,9 +9,6 @@ steam_shop = 'http://store.steampowered.com/app/'
 #    * [0] : 이 게임을 검색하면 말할 이름입니다. 0을 넣으면 기본값입니다.
 #    * [1] : 그 게임의 고유번호입니다.
 
-game_synonym 딕셔너리
-  - key : game_number의 모든 key를 갖고 있어야 합니다. (두 딕셔너리의 key값이 완전히 같아야 합니다.)
-  - value : key로 칭해지는 게임들의 별명들을 적으면 됩니다.
 game_number = {
 	"playerunknown's battlegrounds" : ['어쭈. 치킨 한번 먹어봤나보네?','578080'],
 	'darkest dungeon' : ['정말 괜찮은 게임이지. 오늘도 의지를 시험해보자구!','262060'],
