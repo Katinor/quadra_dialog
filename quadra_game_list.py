@@ -72,5 +72,5 @@ game_synonym = {
 	'pony island' : ['포니 아일랜드','포니아일랜드'],
 	"please, don't touch anything" : ['제발 아무 것도 만지지 마','제발 아무것도 만지지 마','아무 것도 만지지 마','아무것도 만지지 마'],
 	'void memory' : ['보이드 메모리','보이드메모리'],
-	'stardew valley' : ['스타듀 벨리','스타듀벨리']
+	'stardew valley' : ['스타듀 벨리','스타듀벨리','스타듀 밸리','스타듀밸리']
 }
