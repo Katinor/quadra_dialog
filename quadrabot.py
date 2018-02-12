@@ -88,12 +88,12 @@ def dialog_do(bot, update):
 	
 	if target[0] == "야구게임":
 		now = log_append(chat_id, str(update.message.text), "bb","start1")
-		temp = quadra_baseball.start(update.message.from_id)
+		temp = quadra_baseball.start(update.message.from_user.id)
 		if temp == -1:
 			update.message.reply_text("이미 플레이중인거 같은데?")
 		else:
-			now = log_append(chat_id, update.message.from_id+" "+temp, "bb","start2")
-			update.message.reply_text("좋아! 이제 시작해보자~")
+			now = log_append(chat_id,str(update.message.from_user.id)+" "+str(temp), "bb","start2")
+			update.message.reply_text("좋아! 이제 시작해보자~\n \"사잽아 ~ 맞아?\" 라고 말해줘!\n그만하고 싶다면 \"사잽아 야구게임 그만할래\"라고 말해줘!")
 	else:
 		log_append(chat_id, str(update.message.text), "d_do",0)
 		if target[0] in quadra_search_vocab.dis_list: 
@@ -119,6 +119,53 @@ def dialog_buy(bot, update):
 		update.message.reply_text(random.choice(quadra_dialog_list.dialog_buy_list[target[0]]))
 	else:
 		update.message.reply_text("그건 니돈으로 사는게 어때?")
+
+def baseball_prog(bot, update):
+	chat_id = update.message.chat_id
+	now = log_append(chat_id, str(update.message.text), "bb","prog")
+	user_id = update.message.from_user.id
+	temp = quadra_baseball.enable(user_id)
+	if temp == False:
+		log_append(chat_id,str(user_id)+" isn't playing baseball", "bb","p_e1")
+		update.message.reply_text("야구게임을 하고 싶다면 먼저 \"사잽아 야구게임 하자\" 라고 말해줘!")
+	else:
+		target = re.search('^사잽아 ((?:(?! 맞아\?).)*) 맞아\?', str(update.message.text))
+		target = target.groups()
+		if len(target[0]) != 3:
+			log_append(chat_id,"you have to give answer 000 ~ 999", "bb","p_e2")
+			update.message.reply_text("혹시 하는말인데, 수는 3자리로 써야해. 까먹은건 아니지?\n그만하고 싶다면 \"사잽아 야구게임 그만할래\"라고 말해줘!")
+		else:
+			data = quadra_baseball.check(user_id)
+			temp_bool = quadra_baseball.check_equal(int(target[0]))
+			if temp_bool:
+				result = quadra_baseball.gameManager(int(target[0]),int(data[0]))
+				data[0] = int(data[0])
+				if result[0] == 3:
+					log_append(chat_id,"answer is "+str(data[0]), "bb","p_cor")
+					update.message.reply_text("정답이야! "+str(int(data[1])+1)+"번만에 맞췄는걸!")
+					quadra_baseball.end(user_id)
+				else:
+					log_append(chat_id,str(result[0])+"-"+str(result[1])+", answer is "+str(data[0]), "bb","p_no")
+					update.message.reply_text(str(result[0])+"스트라이크 "+str(result[1])+"볼! 이번이 "+str(int(data[1])+1)+"번째야!\n그만하고 싶다면 \"사잽아 야구게임 그만할래\"라고 말해줘!")
+					quadra_baseball.lose(user_id)
+			else:
+				log_append(chat_id,"there are duplication", "bb","p_e3")
+				update.message.reply_text("혹시 하는말인데, 각 자리수에 같은 숫자가 들어가면 안돼. 까먹은건 아니지?\n그만하고 싶다면 \"사잽아 야구게임 그만할래\"라고 말해줘!")
+
+def baseball_end(bot, update):
+	chat_id = update.message.chat_id
+	now = log_append(chat_id, str(update.message.text), "bb","end")
+	user_id = update.message.from_user.id
+	temp = quadra_baseball.enable(user_id)
+	if temp == False:
+		log_append(chat_id,str(user_id)+" isn't playing baseball", "bb","e_e")
+		update.message.reply_text("애초에 안하고 있었던 것 같은데.. 야구게임을 하고 싶다면 먼저 \"사잽아 야구게임 하자\" 라고 말해줘!")
+	else:
+		data = quadra_baseball.check(user_id)
+		data[0] = int(data[0])
+		log_append(chat_id,"answer is "+str(data[0]), "bb","end2")
+		update.message.reply_text("그만하려고? 하는수없지. 정답은 "+str(data[0])+"이었고, 너는 "+str(data[1])+"번 시도했어!")
+		quadra_baseball.end(user_id)
 
 def dial001(bot, update):
 	chat_id = update.message.chat_id
@@ -228,6 +275,8 @@ updater.dispatcher.add_handler(RegexHandler('^사잽아 도와줘$', version))
 help_handler = CommandHandler('help', version)
 updater.dispatcher.add_handler(help_handler)
 
+updater.dispatcher.add_handler(RegexHandler('^사잽아 ((?:(?! 맞아\?).)*) 맞아\?', baseball_prog))
+updater.dispatcher.add_handler(RegexHandler('^사잽아 야구게임 그만할래$', baseball_end))
 updater.dispatcher.add_handler(RegexHandler('^쫑긋$',dial001))
 updater.dispatcher.add_handler(RegexHandler('^줘팸$',dial002))
 updater.dispatcher.add_handler(RegexHandler('^사잽이는 잽을 4번 날린다고 사잽이야\?$', dial003))
