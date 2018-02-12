@@ -1,4 +1,5 @@
 import os
+import random
 
 def enable(user_id):
 	profile_name = "baseball_telegram_database/"+str(user_id)+".txt"
@@ -17,6 +18,7 @@ def start(user_id):
 		fp.write(answer)
 		fp.write("\n")
 		fp.write("0")
+		fp.close()
 		return answer
 
 def gameManager(target,answer):
@@ -35,6 +37,7 @@ def check(user_id):
 		fp = open(profile_name,'r')
 		target = fp.readlines()
 		target[1] = int(target[1])
+		fp.close()
 		return target
 
 def lose(user_id):
@@ -45,6 +48,7 @@ def lose(user_id):
 	fp.write(temp[0])
 	fp.write("\n")
 	fp.write(str(temp[1]))
+	fp.close()
 
 def end(user_id):
 	profile_name = "baseball_telegram_database/"+str(user_id)+".txt"

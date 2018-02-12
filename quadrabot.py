@@ -83,18 +83,27 @@ def dialog_please(bot, update):
 
 def dialog_do(bot, update):
 	chat_id = update.message.chat_id
-	now = log_append(chat_id, str(update.message.text), "d_do",0)
 	target = re.search('^사잽아 ((?:(?! 하자).)*) 하자', str(update.message.text))
 	target = target.groups()
-
-	if target[0] in quadra_search_vocab.dis_list: 
-		update.message.reply_text(random.choice(quadra_dialog_list.dialog_dis_do))
-	elif target[0] in quadra_search_vocab.adult_list:
-		update.message.reply_text(random.choice(quadra_dialog_list.dialog_hentai_do))
-	elif target[0] in quadra_dialog_list.dialog_do_list:
-		update.message.reply_text(random.choice(quadra_dialog_list.dialog_do_list[target[0]]))
+	
+	if target[0] == "야구게임":
+		now = log_append(chat_id, str(update.message.text), "bb","start1")
+		temp = quadra_baseball.start(update.message.from_id)
+		if temp == -1:
+			update.message.reply_text("이미 플레이중인거 같은데?")
+		else:
+			now = log_append(chat_id, update.message.from_id+" "+temp, "bb","start2")
+			update.message.reply_text("좋아! 이제 시작해보자~")
 	else:
-		update.message.reply_text("미안. 뭘 하자는건지 모르겠어.")
+		log_append(chat_id, str(update.message.text), "d_do",0)
+		if target[0] in quadra_search_vocab.dis_list: 
+			update.message.reply_text(random.choice(quadra_dialog_list.dialog_dis_do))
+		elif target[0] in quadra_search_vocab.adult_list:
+			update.message.reply_text(random.choice(quadra_dialog_list.dialog_hentai_do))
+		elif target[0] in quadra_dialog_list.dialog_do_list:
+			update.message.reply_text(random.choice(quadra_dialog_list.dialog_do_list[target[0]]))
+		else:
+			update.message.reply_text("미안. 뭘 하자는건지 모르겠어.")
 
 def dialog_buy(bot, update):
 	chat_id = update.message.chat_id
