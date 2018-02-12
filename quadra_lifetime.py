@@ -10,7 +10,7 @@ timer_6 = ["오늘 저녁은 뭐야~? 헤헤...","역시 하루의 마지막은 
 timer_7 = ["하루가 끝나가면 쉬어야지. 게임이라던가?","배부르니까 한숨 더 자볼까나~","오늘을 마무리하는데에는 역시 콜라 한잔이지!"]
 timer_8 = ["오늘 하루도 수고했어. 그렇게 내일도 더 멋지게 살아보자.","잘자! 내일도 행복하자구","오늘도 이렇게 지나가는구나...","오늘도 행복한 하루!"]
 
-def checkSwitch(now)
+def checkSwitch(now):
 	if 0 <= now.tm_hour < 6:
 		return random.choice(timer_0)
 	elif 6 <= now.tm_hour < 7:
