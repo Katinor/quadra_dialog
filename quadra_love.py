@@ -35,6 +35,7 @@ def mody(user_id,value,now):
 
 def check(user_id):
 	profile_name = "love_telegram_database/"+str(user_id)+".txt"
+	if enable(user_id) == False: createNew(user_id)
 	fp = open(profile_name,'r')
 	target = fp.readlines()
 	fp.close()
