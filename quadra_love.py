@@ -97,11 +97,19 @@ def process(user_id,switch,ref):
 			proc = True
 		if switch == 11:
 			if ref > 10: ref = 10
-			temp1 = 11 - ref
-			temp1 = temp1//10 + temp1//9 + (temp1//7)*2 + (temp1//6)*3
+			temp1 = 20 - ref
 			inc = temp1 * (MAX_LOVE - data[0]) / (MAX_LOVE-MIN_LOVE)
-			if inc < 2: inc = 2
+			if inc < 5: inc = 5
 			value = data[0] + inc
+			proc = True
+		if switch == 12:
+			if ref == 1 : temp1 == 4 + 8 * (MAX_LOVE - data[0]) / (MAX_LOVE-MIN_LOVE)
+			if ref == 2 : temp1 == 3 + 4 * (MAX_LOVE - data[0]) / (MAX_LOVE-MIN_LOVE)
+			if ref == 3 : temp1 == 2 + 2 * (MAX_LOVE - data[0]) / (MAX_LOVE-MIN_LOVE)
+			if ref == 4 : temp1 == 2
+			if ref == 5 : temp1 == 1
+			if ref >= 6 : temp1 == -1
+			value = data[0] + int(temp1)
 			proc = True
 	if proc: 
 		if value > MAX_LOVE: value = MAX_LOVE

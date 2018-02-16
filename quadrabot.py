@@ -16,6 +16,7 @@ import quadra_baseball
 import quadra_lifetime
 import quadra_love
 import quadra_updown
+import quadra_lotto
 
 my_token = quadrabot_config.TOKEN_TELEGRAM
 updater = Updater(my_token)
@@ -23,6 +24,7 @@ updater = Updater(my_token)
 def onGame(user_id):
 	if quadra_baseball.enable(user_id) : return "야구게임을"
 	if quadra_updown.enable(user_id) : return "업다운을"
+	if quadra_lotto.enable(user_id) : return "로또를"
 	else : return ""
 
 def log_append(_chat_id, _text, _type, _subtype):
@@ -50,7 +52,7 @@ def version(bot, update):
 	chat_id = update.message.chat_id
 	now = log_append(chat_id, str(update.message.text), "help",0)
 	update.message.reply_text(
-		"반가워! 나는 사잽이라고해! 지금은 0.1.1 버전이야! \n나는 이런것들을 할 수 있어!\n * 쫑긋\n * 사잽아 ~~ 찾아줘/알려줘\n   * 지원 엔진 : 구글, 네이버, 나무위키, 리브레위키, 위키백과, 구스위키, 진보위키, 백괴사전\n * 사잽아 ~ 해줘/하자/어때/사줘\n * 사잽아 (게임이름) 하자\n   * 지원 게임 : 야구게임, 업다운\n * 사잽아 나 어때")
+		"반가워! 나는 사잽이라고해! 지금은 0.1.1 버전이야! \n나는 이런것들을 할 수 있어!\n * 쫑긋\n * 사잽아 ~~ 찾아줘/알려줘\n   * 지원 엔진 : 구글, 네이버, 나무위키, 리브레위키, 위키백과, 구스위키, 진보위키, 백괴사전\n * 사잽아 ~ 해줘/하자/어때/사줘\n * 사잽아 (게임이름) 하자\n   * 지원 게임 : 야구게임, 업다운, 로또\n * 사잽아 나 어때")
 	quadra_love.process(update.message.from_user.id,1,0)
 
 def lifetime(bot, update):
@@ -90,8 +92,52 @@ def dialog_please(bot, update):
 	now = log_append(chat_id, str(update.message.text), "d_plz",0)
 	target = re.search('사잽아 ((?:(?! (해줘|할래)).)*) (해줘|할래)', str(update.message.text))
 	target = target.groups()
-
-	if target[0] in quadra_search_vocab.dis_list: 
+	user_id = update.message.from_user.id
+	
+	if target[0] == "자동로또":
+		game_name = onGame(user_id)
+		if game_name == "로또를":
+			user_in = [10,10,10,10,10,10]
+			for i in range(0,6,1):
+				swt = True
+				while(swt):
+					temp = random.randrange(1,36)
+					if temp in user_in:
+						continue
+					else:
+						user_in[i] = temp
+						swt = False
+			user_in.sort()
+			data = quadra_lotto.check(user_id)
+			result = quadra_lotto.gameManager(user_in,data[0],data[1])
+			text = ""
+			for i in user_in:
+				text += str(i)+" "
+			log_append(chat_id,"player : "+text, "lt","p_at")
+			text2 = "난 "+text+" 로 해봤어!\n"
+			text = ""
+			for i in data[0]:
+				text += str(i)+" "
+			log_append(chat_id,"rank "+str(result)+", answer is "+text+": "+str(data[1]), "lt","p_cor")
+			text2 += "정답은 "+text+" 에 보너스번호 "+str(data[1])+" 이었어!\n"
+			if result == 1:
+				text2 += "1등이네! 축하해!! 8,145,060 분의 1의 확률인데, 너무 대단한걸?"
+			elif result == 2:
+				text2 += "2등이야. 나름 멋진 결과인걸? 그래도 백만을 넘는 경우중 한번인데."
+			elif result == 3:
+				text2 += "3등. 이정도면 꽤나 운이 좋은걸?"
+			elif result == 4:
+				text2 += "4등. 이윤은 50배 정도가 되겠네."
+			elif result == 5:
+				text2 += "5등. 45명중의 한명이야. 그래도 본전은 뽑았을려나?"
+			else: text2 += "지나친 도박은 좋지 않다구. 돈을 썻다면 낭비가 되어버렸을거야.."
+			update.message.reply_text(text2)
+			quadra_lotto.end(user_id)
+			quadra_love.process(update.message.from_user.id,12,result)
+		else: 
+			log_append(chat_id,"there are no game playing", "gm","p_no")
+			update.message.reply_text("게임을 안하고 있는것같은데?")
+	elif target[0] in quadra_search_vocab.dis_list: 
 		update.message.reply_text(random.choice(quadra_dialog_list.dialog_dis_please))
 		quadra_love.process(update.message.from_user.id,3,0)
 	elif target[0] in quadra_search_vocab.adult_list:
@@ -130,6 +176,17 @@ def dialog_do(bot, update):
 			temp = quadra_updown.start(update.message.from_user.id)
 			now = log_append(chat_id,str(update.message.from_user.id)+" "+str(temp), "ud","start2")
 			update.message.reply_text("좋아! 이제 시작해보자~\n \"사잽아 ~ 맞아?\" 라고 말해줘!\n그만하고 싶다면 \"사잽아 그만할래\"라고 말해줘!")
+			quadra_love.process(update.message.from_user.id,1,0)
+	elif target[0] == "로또":
+		if onGame(update.message.from_user.id) == "로또를":
+			update.message.reply_text("이미 플레이중인거 같은데?\n1부터 35까지의 수 중 6개를 골라서 \"사잽아 ~ 맞아?\" 라고 말해줘. 예를 들면 \"사잽아 1 3 4 16 21 34 맞아?\" 느낌으로 써주면 돼!\n그만하고 싶다면 \"사잽아 그만할래\"라고 말해줘.\n\"사잽아 자동로또 해줘\"라고 말하면 자동으로 해볼게!.")
+		elif onGame(update.message.from_user.id)!= "" :
+			update.message.reply_text("이미 "+onGame(update.message.from_user.id)+" 플레이중인거 같은데?")
+		else:
+			now = log_append(chat_id, str(update.message.text), "lt","start1")
+			temp = quadra_lotto.start(update.message.from_user.id)
+			now = log_append(chat_id,str(update.message.from_user.id)+" "+str(temp), "lt","start2")
+			update.message.reply_text("좋아! 이제 시작해보자~\n 1부터 35까지의 수 중 6개를 골라서 \"사잽아 ~ 맞아?\" 라고 말해줘. 예를 들면 \"사잽아 1 3 4 16 21 34 맞아?\" 느낌으로 써주면 돼!\n그만하고 싶다면 \"사잽아 그만할래\"라고 말해줘!\n\"사잽아 자동로또 해줘\"라고 말하면 자동으로 해볼게!.")
 			quadra_love.process(update.message.from_user.id,1,0)
 	else:
 		log_append(chat_id, str(update.message.text), "d_do",0)
@@ -219,8 +276,52 @@ def game_prog(bot, update):
 				update.message.reply_text("업! 정답은 그거보다 높은 수야! 이번이 "+str(int(data[1])+1)+"번째야!\n그만하고 싶다면 \"사잽아 그만할래\"라고 말해줘!")
 				quadra_updown.lose(user_id)
 				quadra_love.process(update.message.from_user.id,1,0)
+	elif game_name == "로또를":
+		target = re.search('^사잽아 ((?:(?! 맞아\?).)*) 맞아\?', str(update.message.text))
+		target = target.groups()
+		temp1 = target[0].split(" ")
+		user_in = []
+		swt = 0
+		for i in temp1:
+			user_in.append(int(i))
+		if len(user_in) != 6 :
+			log_append(chat_id,"you have to give answer 6 prices", "lt","p_e1")
+			update.message.reply_text("혹시 하는말인데, 로또는 6개의 수로 하는거야. 까먹은건 아니지?\n예를 들면 \"사잽아 1 3 4 16 21 34 맞아?\" 느낌으로 써주면 돼!\n그만하고 싶다면 \"사잽아 그만할래\"라고 말해줘!")
+			swt = 1
+		elif quadra_lotto.check_equal(user_in) == False:
+			log_append(chat_id,"there are duplicated", "lt","p_e2")
+			update.message.reply_text("혹시 하는말인데, 각각의 수는 달라야 해.\n예를 들면 \"사잽아 1 3 4 16 21 34 맞아?\" 느낌으로 써주면 돼!\n그만하고 싶다면 \"사잽아 그만할래\"라고 말해줘!")
+			swt = 1
+		else:
+			for i in user_in:
+				if i < 1 or i > 35:
+					swt = 1
+					log_append(chat_id,"you have to give answer 1 ~ 35", "lt","p_e3")
+					update.message.reply_text("혹시 하는말인데, 각각의 번호는 1~35 중의 수로 써야해. 까먹은건 아니지?\n그만하고 싶다면 \"사잽아 그만할래\"라고 말해줘!")
+		if swt == 0:
+			data = quadra_lotto.check(user_id)
+			result = quadra_lotto.gameManager(user_in,data[0],data[1])
+			text = ""
+			for i in data[0]:
+				text += str(i)+" "
+			log_append(chat_id,"rank "+str(result)+", answer is "+text+": "+str(data[1]), "lt","p_cor")
+			text2 = "정답은 "+text+" 에 보너스번호 "+str(data[1])+" 이었어!\n"
+			if result == 1:
+				text2 += "1등이네! 축하해!! 8,145,060 분의 1의 확률인데, 너무 대단한걸?"
+			elif result == 2:
+				text2 += "2등이야. 나름 멋진 결과인걸? 그래도 백만을 넘는 경우중 한번인데."
+			elif result == 3:
+				text2 += "3등. 이정도면 꽤나 운이 좋은걸?"
+			elif result == 4:
+				text2 += "4등. 이윤은 50배 정도가 되겠네."
+			elif result == 5:
+				text2 += "5등. 45명중의 한명이야. 그래도 본전은 뽑았을려나?"
+			else: text2 += "지나친 도박은 좋지 않다구. 돈을 썻다면 낭비가 되어버렸을거야.."
+			update.message.reply_text(text2)
+			quadra_lotto.end(user_id)
+			quadra_love.process(update.message.from_user.id,12,result)
 	else: 
-		log_append(chat_id,"up, answer is "+str(data[0]), "gm","p_no")
+		log_append(chat_id,"there are no game playing", "gm","p_no")
 		update.message.reply_text("게임을 안하고 있는것같은데?")
 
 def game_end(bot, update):
@@ -239,6 +340,16 @@ def game_end(bot, update):
 		log_append(chat_id,"answer is "+str(data[0]), "ud","end2")
 		update.message.reply_text("업다운을 그만하려고? 하는수없지. 정답은 "+str(data[0])+"이었고, 너는 "+str(data[1])+"번 시도했어!")
 		quadra_updown.end(user_id)
+	elif game_name == "로또를":
+		data = quadra_lotto.check(user_id)
+		text = ""
+		for i in data[0]:
+			text += str(i)+" "
+		log_append(chat_id,"answer is "+text+": "+str(data[1]), "lt","p_cor")
+		text2 = " 정답은 "+text+" 에 보너스번호 "+str(data[1])+" 이었어!"
+		log_append(chat_id,"answer is "+str(data[0]), "lt","end2")
+		update.message.reply_text("로또를 그만하려고? 하는수없지."+text2)
+		quadra_lotto.end(user_id)
 	else:
 		log_append(chat_id,str(user_id)+" isn't playing baseball", "gm","e_e")
 		update.message.reply_text("애초에 안하고 있었던 것 같은데.. 게임을 하고 싶다면 먼저 \"사잽아 (게임이름) 하자\" 라고 말해줘!")
