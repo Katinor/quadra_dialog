@@ -51,6 +51,10 @@ def url_encode(data):
 def version(bot, update):
 	chat_id = update.message.chat_id
 	now = log_append(chat_id, str(update.message.text), "help",0)
+	bot.send_photo(
+		chat_id = chat_id, 
+		photo = open('images/prof.png', 'rb')
+	)
 	update.message.reply_text(
 		"반가워! 나는 사잽이라고해! 지금은 0.1.1 버전이야! \n나는 이런것들을 할 수 있어!\n * 쫑긋\n * 사잽아 ~~ 찾아줘/알려줘\n   * 지원 엔진 : 구글, 네이버, 나무위키, 리브레위키, 위키백과, 구스위키, 진보위키, 백괴사전\n * 사잽아 ~ 해줘/하자/어때/사줘\n * 사잽아 (게임이름) 하자\n   * 지원 게임 : 야구게임, 업다운, 로또\n * 사잽아 나 어때")
 	quadra_love.process(update.message.from_user.id,1,0)
