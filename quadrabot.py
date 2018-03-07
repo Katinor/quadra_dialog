@@ -51,6 +51,7 @@ def url_encode(data):
 def version(bot, update):
 	chat_id = update.message.chat_id
 	now = log_append(chat_id, str(update.message.text), "help",0)
+	update.message.reply_text("잠시만 기다려줘! 사진파일때문에 조금 느릴거야!")
 	bot.send_photo(
 		chat_id = chat_id, 
 		photo = open('images/prof.png', 'rb')
